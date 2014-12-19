@@ -22,3 +22,4 @@ Metrics Dashboard makes use of the following projects:
 * [Twitter Bootstrap][http://getbootstrap.com/]
 * [AngularJS][https://angularjs.org/]
 * [jQuery][http://jquery.com/]
+* [Moment.js][http://momentjs.com/downloads/moment.min.js]

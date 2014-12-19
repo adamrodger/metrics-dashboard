@@ -14,12 +14,13 @@ angular.module('app.sonar').service('Sonar', ['$http', 'appConfig',
             return $http.jsonp(appConfig.baseUrl + '/resources?callback=JSON_CALLBACK');
         }
 
-        function metrics(key) {
+        function metrics(key, date) {
             return $http.jsonp(
                 appConfig.baseUrl
-                + '/resources?callback=JSON_CALLBACK&resource='
-                + key
-                + '&metrics=ncloc,function_complexity,file_complexity,coverage,violations_density');
+                + '/timemachine?callback=JSON_CALLBACK'
+                + '&metrics=ncloc,function_complexity,file_complexity,coverage,violations_density'
+                + '&resource=' + key
+                + '&toDateTime=' + date.toISOString());
         }
     }
 ]);

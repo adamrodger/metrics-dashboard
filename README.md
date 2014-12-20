@@ -23,3 +23,5 @@ Metrics Dashboard makes use of the following projects:
 * [AngularJS][https://angularjs.org/]
 * [jQuery][http://jquery.com/]
 * [Moment.js][http://momentjs.com/downloads/moment.min.js]
+* [Raphael][http://raphaeljs.com/]
+* [morris.js][http://morrisjs.github.io/morris.js/index.html]

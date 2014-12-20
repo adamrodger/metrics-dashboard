@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('app.dashboard').controller('DashboardCtrl', ['$scope', '$q', 'Sonar',
-    function($scope, $q, Sonar) {
+angular.module('app.dashboard').controller('DashboardCtrl', ['$scope', '$log', '$q', 'Sonar',
+    function($scope, $log, $q, Sonar) {
         $scope.metrics = new Array();
 
         function sum(array, property) {
@@ -15,7 +15,7 @@ angular.module('app.dashboard').controller('DashboardCtrl', ['$scope', '$q', 'So
             var timePeriods = [];
 
             var now = moment().endOf("month"); // end of the current month
-            var currentPeriod = moment(now).subtract(12, 'month');
+            var currentPeriod = moment(now).subtract(12, 'month').endOf('month');
 
             while (currentPeriod <= now) {
                 timePeriods.push({
@@ -30,6 +30,8 @@ angular.module('app.dashboard').controller('DashboardCtrl', ['$scope', '$q', 'So
 
         // for each time period, aggregate the metrics for all projects, weighted by lines
         function calculateMetrics(timePeriods) {
+            $log.info('Calculating metrics from retrieved data');
+
             $scope.metrics = [];
             var periodsLength = timePeriods.length;
 
@@ -49,7 +51,7 @@ angular.module('app.dashboard').controller('DashboardCtrl', ['$scope', '$q', 'So
                 });
 
                 $scope.metrics.push({
-                    date: timePeriod.date.toDate(),
+                    date: timePeriod.date,
                     totalLines: totalLines,
                     methodComplexity: sum(weightedMetrics, 'methodComplexity').toFixed(2),
                     fileComplexity: sum(weightedMetrics, 'fileComplexity').toFixed(2),
@@ -57,6 +59,8 @@ angular.module('app.dashboard').controller('DashboardCtrl', ['$scope', '$q', 'So
                     compliance: sum(weightedMetrics, 'compliance').toFixed(2)
                 });
             }
+
+            $log.info('Finished calculating metrics');
         }
 
         function processTimePeriod(resource, timePeriod) {
@@ -83,9 +87,11 @@ angular.module('app.dashboard').controller('DashboardCtrl', ['$scope', '$q', 'So
                     coverage: project.v[3],
                     compliance: project.v[4]
                 });
+
+                $log.debug('Successfully retrieved metrics for %s during %s', resource.name, timePeriod.date.format('YYYY-MM'));
             });
         }
-        
+
         function processResources(resources, timePeriods) {
             var length = resources.length;
             var periodsLength = timePeriods.length;
@@ -101,7 +107,7 @@ angular.module('app.dashboard').controller('DashboardCtrl', ['$scope', '$q', 'So
 
             $q.all(promises).then(function() { calculateMetrics(timePeriods); });
         }
-        
+
         // load all data from the Sonar service and aggregate results
         Sonar.resources().then(function(response) {
             var timePeriods = generateTimePeriods();

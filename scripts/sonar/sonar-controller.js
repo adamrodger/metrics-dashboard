@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('app.dashboard').controller('DashboardCtrl', ['$scope', '$log', '$q', 'Sonar',
+angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'Sonar',
     function($scope, $log, $q, Sonar) {
         $scope.metrics = new Array();
 

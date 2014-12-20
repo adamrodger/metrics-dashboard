@@ -2,7 +2,14 @@
 
 angular.module('app.dashboard').directive('lineChart', function() {
     return {
-        restrict: 'A',
+        restrict: 'E',
+        replace: true,
+        templateUrl: 'partial/trend-panel.html',
+        scope: {
+            title: '@title',
+            property: '@property',
+            metrics: '=metrics'
+        },
         link: function($scope, element, attrs) {
             $scope.$watch('metrics', function(data) {
                 if (data && data.length) {
@@ -12,13 +19,15 @@ angular.module('app.dashboard').directive('lineChart', function() {
                             value: value[attrs.property]
                         }
                     });
-                    
+
                     Morris.Line({
-                        element: element,
+                        element: attrs.property,
                         data: dataPoints,
                         xkey: 'label',
                         ykeys: ['value'],
-                        labels: [attrs.property]
+                        labels: [attrs.title],
+                        xLabels: 'month',
+                        xLabelAngle: 45
                     });
                 }
             }, true);

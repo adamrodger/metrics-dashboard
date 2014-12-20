@@ -1,8 +1,9 @@
 'use strict';
 
-angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'Sonar',
-    function($scope, $log, $q, Sonar) {
+angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'appConfig', 'Sonar',
+    function($scope, $log, $q, appConfig, Sonar) {
         $scope.metrics = new Array();
+        $scope.goals = appConfig.goals;
 
         function sum(array, property) {
             return array.reduce(function(total, project) {

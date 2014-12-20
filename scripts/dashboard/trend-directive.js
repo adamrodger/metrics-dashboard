@@ -8,6 +8,8 @@ angular.module('app.dashboard').directive('lineChart', function() {
         scope: {
             title: '@title',
             property: '@property',
+            goal: '=goal',
+            unit: '@unit',
             metrics: '=metrics'
         },
         link: function($scope, element, attrs) {
@@ -20,15 +22,28 @@ angular.module('app.dashboard').directive('lineChart', function() {
                         }
                     });
 
-                    Morris.Line({
+                    var properties = {
                         element: attrs.property,
                         data: dataPoints,
                         xkey: 'label',
                         ykeys: ['value'],
                         labels: [attrs.title],
                         xLabels: 'month',
-                        xLabelAngle: 45
-                    });
+                        xLabelAngle: 45,
+                        hideHover: 'auto',
+                        smooth: false
+                    };
+
+                    if ($scope.goal) {
+                        properties.goals = [$scope.goal];
+                        properties.goalLineColors = ['red'];
+                    }
+
+                    if ($scope.unit) {
+                        properties.postUnits = $scope.unit;
+                    }
+
+                    Morris.Line(properties);
                 }
             }, true);
         }

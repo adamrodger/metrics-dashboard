@@ -5,13 +5,15 @@ var app = angular.module('app', [
 ]);
 
 app.constant('appConfig', {
-    baseUrl: 'http://localhost/api',
-    username: 'YOURUSERNAME',
-    password: 'YOURPASSWORD',
-    goals: {
-        methodComplexity: 2.5,
-        fileComplexity: 10,
-        coverage: 75,
-        compliance: 90
+    sonar: {
+        baseUrl: 'http://localhost/api',
+        username: 'YOURUSERNAME',
+        password: 'YOURPASSWORD',
+        goals: {
+            methodComplexity: 2.5,
+            fileComplexity: 10,
+            coverage: 75,
+            compliance: 90
+        }
     }
 });

@@ -8,15 +8,15 @@ angular.module('app.sonar').service('Sonar', ['$http', 'appConfig',
         });
 
         $http.defaults.withCredentials = true;
-        $http.defaults.headers['Authorization'] = 'Basic ' + window.btoa(appConfig.username + ':' + appConfig.password);
+        $http.defaults.headers['Authorization'] = 'Basic ' + window.btoa(appConfig.sonar.username + ':' + appConfig.sonar.password);
 
         function resources() {
-            return $http.jsonp(appConfig.baseUrl + '/resources?callback=JSON_CALLBACK');
+            return $http.jsonp(appConfig.sonar.baseUrl + '/resources?callback=JSON_CALLBACK');
         }
 
         function metrics(key, date) {
             return $http.jsonp(
-                appConfig.baseUrl
+                appConfig.sonar.baseUrl
                 + '/timemachine?callback=JSON_CALLBACK'
                 + '&metrics=ncloc,function_complexity,file_complexity,coverage,violations_density'
                 + '&resource=' + key

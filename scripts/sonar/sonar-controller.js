@@ -61,6 +61,9 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                 });
             }
 
+            $scope.latest = $scope.metrics[$scope.metrics.length - 1];
+            $scope.previous = $scope.metrics[$scope.metrics.length - 2];
+
             $log.info('Finished calculating metrics');
         }
 

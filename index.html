@@ -19,11 +19,56 @@
     <div class="container-fluid">
         <div ng-controller="SonarCtrl">
             <div class="row">
-                <line-chart title="Total Lines" property="totalLines" metrics="metrics"></line-chart>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Current Metrics
+                        </div>
+                        <div class="panel-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Metric</th>
+                                        <th>Value</th>
+                                        <th>Delta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>Total Lines</th>
+                                        <td>{{ latest.totalLines | number:0 }}</td>
+                                        <td>{{ latest.totalLines - previous.totalLines | number:0 }}</td>
+                                    </tr>
+                                    <tr ng-class="latest.methodComplexity > goals.methodComplexity ? 'danger' : 'success'">
+                                        <th>Method Complexity</th>
+                                        <td>{{ latest.methodComplexity }}</td>
+                                        <td>{{ latest.methodComplexity - previous.methodComplexity | number:2 }}</td>
+                                    </tr>
+                                    <tr ng-class="latest.fileComplexity > goals.fileComplexity ? 'danger' : 'success'">
+                                        <th>File Complexity</th>
+                                        <td>{{ latest.fileComplexity }}</td>
+                                        <td>{{ latest.fileComplexity - previous.fileComplexity | number:2 }}</td>
+                                    </tr>
+                                    <tr ng-class="latest.coverage < goals.coverage ? 'danger' : 'success'">
+                                        <th>Test Coverage</th>
+                                        <td>{{ latest.coverage }}%</td>
+                                        <td>{{ latest.coverage - previous.coverage | number:2 }}</td>
+                                    </tr>
+                                    <tr ng-class="latest.compliance < goals.compliance ? 'danger' : 'success'">
+                                        <th>Rules Compliance</th>
+                                        <td>{{ latest.compliance }}%</td>
+                                        <td>{{ latest.compliance - previous.compliance | number:2 }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                 <line-chart title="Method Complexity" property="methodComplexity" goal="goals.methodComplexity" metrics="metrics"></line-chart>
                 <line-chart title="File Complexity" property="fileComplexity" goal="goals.fileComplexity" metrics="metrics"></line-chart>
             </div>
             <div class="row">
+                <line-chart title="Total Lines" property="totalLines" metrics="metrics"></line-chart>
                 <line-chart title="Test Coverage" property="coverage" goal="goals.coverage" unit="%" metrics="metrics"></line-chart>
                 <line-chart title="Rules Compliance" property="compliance" goal="goals.compliance" unit="%" metrics="metrics"></line-chart>
             </div>

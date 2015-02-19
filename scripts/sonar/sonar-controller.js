@@ -44,18 +44,24 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                     var factor = project.lines / totalLines;
 
                     return {
-                        methodComplexity: factor * project.methodComplexity,
-                        fileComplexity: factor * project.fileComplexity,
+                        numberOfMethodsInProjectInPeriod: project.totalMethods,
+                        numberOfFilesInProjectInPeriod: project.totalFiles,
+						complexityInProjectInPeriod: project.totalComplexity,
                         coverage: factor * project.coverage,
                         compliance: factor * project.compliance,
                     };
                 });
-
+				var complexityInPeriod = sum(weightedMetrics, 'complexityInProjectInPeriod')
+				
+				var methodComplexityInPeriod = complexityInPeriod / sum(weightedMetrics, 'numberOfMethodsInProjectInPeriod')
+				var fileComplexityInPeriod = complexityInPeriod / sum(weightedMetrics, 'numberOfFilesInProjectInPeriod')
+				
+				// add the details for the complete time period
                 $scope.metrics.push({
                     date: timePeriod.date,
                     totalLines: totalLines,
-                    methodComplexity: sum(weightedMetrics, 'methodComplexity').toFixed(2),
-                    fileComplexity: sum(weightedMetrics, 'fileComplexity').toFixed(2),
+                    methodComplexity: methodComplexityInPeriod.toFixed(2),
+                    fileComplexity: fileComplexityInPeriod.toFixed(2),
                     coverage: sum(weightedMetrics, 'coverage').toFixed(2),
                     compliance: sum(weightedMetrics, 'compliance').toFixed(2)
                 });
@@ -86,10 +92,11 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                 timePeriod.metrics.push({
                     name: resource.name,
                     lines: project.v[0],
-                    methodComplexity: project.v[1],
-                    fileComplexity: project.v[2],
-                    coverage: project.v[3],
-                    compliance: project.v[4]
+					totalComplexity: project.v[1],
+					totalFiles: project.v[2],
+                    totalMethods: project.v[3],
+                    coverage: project.v[4],
+                    compliance: project.v[5]
                 });
 
                 $log.debug('Successfully retrieved metrics for %s during %s', resource.name, timePeriod.date.format('YYYY-MM'));

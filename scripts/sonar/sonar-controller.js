@@ -48,13 +48,26 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                         numberOfFilesInProjectInPeriod: project.totalFiles,
                         complexityInProjectInPeriod: project.totalComplexity,
                         coverage: factor * project.coverage,
-                        compliance: factor * project.compliance,
+
+                        // Magic numbers are the Sonar default weights. To be replaced with config data eventually.
+                        weightedBlockingIssuesInProjectInPeriod: 10 * project.blockerIssues,
+                        weightedCriticalIssuesInProjectInPeriod: 5 * project.criticalIssues,
+                        weightedMajorIssuesInProjectInPeriod: 3 * project.majorIssues,
+                        weightedMinorIssuesInProjectInPeriod: 1 * project.minorIssues,
+                        weightedInfoIssuesInProjectInPeriod: 0 * project.infoIssues
+
                     };
                 });
                 var complexityInPeriod = sum(weightedMetrics, 'complexityInProjectInPeriod')
                 
                 var methodComplexityInPeriod = complexityInPeriod / sum(weightedMetrics, 'numberOfMethodsInProjectInPeriod')
                 var fileComplexityInPeriod = complexityInPeriod / sum(weightedMetrics, 'numberOfFilesInProjectInPeriod')
+                
+                var totalWeightedIssuesInPeriod = sum(weightedMetrics, 'weightedBlockingIssuesInProjectInPeriod') + sum(weightedMetrics, 'weightedCriticalIssuesInProjectInPeriod')
+                                                + sum(weightedMetrics, 'weightedMajorIssuesInProjectInPeriod') + sum(weightedMetrics, 'weightedMinorIssuesInProjectInPeriod')
+                                                + sum(weightedMetrics, 'weightedInfoIssuesInProjectInPeriod');
+
+                var rulesComplianceInPeriod = (100 - (totalWeightedIssuesInPeriod / totalLines) * 100)
                 
                 // add the details for the complete time period
                 $scope.metrics.push({
@@ -63,7 +76,7 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                     methodComplexity: methodComplexityInPeriod.toFixed(2),
                     fileComplexity: fileComplexityInPeriod.toFixed(2),
                     coverage: sum(weightedMetrics, 'coverage').toFixed(2),
-                    compliance: sum(weightedMetrics, 'compliance').toFixed(2)
+                    compliance: rulesComplianceInPeriod.toFixed(2)
                 });
             }
 
@@ -96,7 +109,11 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                     totalFiles: project.v[2],
                     totalMethods: project.v[3],
                     coverage: project.v[4],
-                    compliance: project.v[5]
+                    blockerIssues: project.v[5],
+                    criticalIssues: project.v[6],
+                    majorIssues: project.v[7],
+                    minorIssues: project.v[8],
+                    infoIssues: project.v[9]
                 });
 
                 $log.debug('Successfully retrieved metrics for %s during %s', resource.name, timePeriod.date.format('YYYY-MM'));

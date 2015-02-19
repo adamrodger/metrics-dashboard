@@ -18,7 +18,7 @@ angular.module('app.sonar').service('Sonar', ['$http', 'appConfig',
             return $http.jsonp(
                 appConfig.sonar.baseUrl
                 + '/timemachine?callback=JSON_CALLBACK'
-                + '&metrics=ncloc,complexity,files,functions,coverage,violations_density'
+                + '&metrics=ncloc,complexity,files,functions,coverage,blocker_violations,critical_violations,major_violations,minor_violations,info_violations'
                 + '&resource=' + key
                 + '&toDateTime=' + date.toISOString());
         }

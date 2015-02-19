@@ -15,6 +15,13 @@ app.constant('appConfig', {
             coverage: 75,
             compliance: 90
         },
-        projectsRegex: '.*'
+        projectsRegex: '.*',
+        weighting: {
+            blocker: 10,
+            critical: 5,
+            major: 3,
+            minor: 1,
+            info: 0
+        }
     }
 });

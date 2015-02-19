@@ -46,17 +46,17 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                     return {
                         numberOfMethodsInProjectInPeriod: project.totalMethods,
                         numberOfFilesInProjectInPeriod: project.totalFiles,
-						complexityInProjectInPeriod: project.totalComplexity,
+                        complexityInProjectInPeriod: project.totalComplexity,
                         coverage: factor * project.coverage,
                         compliance: factor * project.compliance,
                     };
                 });
-				var complexityInPeriod = sum(weightedMetrics, 'complexityInProjectInPeriod')
-				
-				var methodComplexityInPeriod = complexityInPeriod / sum(weightedMetrics, 'numberOfMethodsInProjectInPeriod')
-				var fileComplexityInPeriod = complexityInPeriod / sum(weightedMetrics, 'numberOfFilesInProjectInPeriod')
-				
-				// add the details for the complete time period
+                var complexityInPeriod = sum(weightedMetrics, 'complexityInProjectInPeriod')
+                
+                var methodComplexityInPeriod = complexityInPeriod / sum(weightedMetrics, 'numberOfMethodsInProjectInPeriod')
+                var fileComplexityInPeriod = complexityInPeriod / sum(weightedMetrics, 'numberOfFilesInProjectInPeriod')
+                
+                // add the details for the complete time period
                 $scope.metrics.push({
                     date: timePeriod.date,
                     totalLines: totalLines,
@@ -92,8 +92,8 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                 timePeriod.metrics.push({
                     name: resource.name,
                     lines: project.v[0],
-					totalComplexity: project.v[1],
-					totalFiles: project.v[2],
+                    totalComplexity: project.v[1],
+                    totalFiles: project.v[2],
                     totalMethods: project.v[3],
                     coverage: project.v[4],
                     compliance: project.v[5]

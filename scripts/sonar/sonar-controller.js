@@ -41,13 +41,13 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                 var totalLines = sum(timePeriod.metrics, 'lines');
 
                 var weightedMetrics = timePeriod.metrics.map(function(project) {
-                    var factor = project.lines / totalLines;
 
                     return {
                         numberOfMethodsInProjectInPeriod: project.totalMethods,
                         numberOfFilesInProjectInPeriod: project.totalFiles,
                         complexityInProjectInPeriod: project.totalComplexity,
-                        coverage: factor * project.coverage,
+                        testableLinesInProjectInPeriod: project.testableLines,
+                        untestedLinesInProjectInPeriod: project.untestedLines,
 
                         // Magic numbers are the Sonar default weights. To be replaced with config data eventually.
                         weightedBlockingIssuesInProjectInPeriod: 10 * project.blockerIssues,
@@ -58,16 +58,25 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
 
                     };
                 });
+                
+                // Complexity calculations
                 var complexityInPeriod = sum(weightedMetrics, 'complexityInProjectInPeriod')
                 
                 var methodComplexityInPeriod = complexityInPeriod / sum(weightedMetrics, 'numberOfMethodsInProjectInPeriod')
                 var fileComplexityInPeriod = complexityInPeriod / sum(weightedMetrics, 'numberOfFilesInProjectInPeriod')
                 
+                // Compliance calculations
                 var totalWeightedIssuesInPeriod = sum(weightedMetrics, 'weightedBlockingIssuesInProjectInPeriod') + sum(weightedMetrics, 'weightedCriticalIssuesInProjectInPeriod')
                                                 + sum(weightedMetrics, 'weightedMajorIssuesInProjectInPeriod') + sum(weightedMetrics, 'weightedMinorIssuesInProjectInPeriod')
                                                 + sum(weightedMetrics, 'weightedInfoIssuesInProjectInPeriod');
 
                 var rulesComplianceInPeriod = (100 - (totalWeightedIssuesInPeriod / totalLines) * 100)
+                
+                // Coverage calculations
+                var testableLinesOfCodeInPeriod = sum(weightedMetrics, 'testableLinesInProjectInPeriod')
+                var untestedLinesOfCodeInPeriod = sum(weightedMetrics, 'untestedLinesInProjectInPeriod')
+                
+                var codeCoverageInPeriod = ((testableLinesOfCodeInPeriod - untestedLinesOfCodeInPeriod) / testableLinesOfCodeInPeriod) * 100
                 
                 // add the details for the complete time period
                 $scope.metrics.push({
@@ -75,7 +84,7 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                     totalLines: totalLines,
                     methodComplexity: methodComplexityInPeriod.toFixed(2),
                     fileComplexity: fileComplexityInPeriod.toFixed(2),
-                    coverage: sum(weightedMetrics, 'coverage').toFixed(2),
+                    coverage: codeCoverageInPeriod.toFixed(2),
                     compliance: rulesComplianceInPeriod.toFixed(2)
                 });
             }
@@ -108,12 +117,13 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                     totalComplexity: project.v[1],
                     totalFiles: project.v[2],
                     totalMethods: project.v[3],
-                    coverage: project.v[4],
-                    blockerIssues: project.v[5],
-                    criticalIssues: project.v[6],
-                    majorIssues: project.v[7],
-                    minorIssues: project.v[8],
-                    infoIssues: project.v[9]
+                    blockerIssues: project.v[4],
+                    criticalIssues: project.v[5],
+                    majorIssues: project.v[6],
+                    minorIssues: project.v[7],
+                    infoIssues: project.v[8],
+                    testableLines: project.v[9],
+                    untestedLines: project.v[10]
                 });
 
                 $log.debug('Successfully retrieved metrics for %s during %s', resource.name, timePeriod.date.format('YYYY-MM'));

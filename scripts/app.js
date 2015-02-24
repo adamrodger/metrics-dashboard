@@ -14,6 +14,13 @@ app.constant('appConfig', {
             fileComplexity: 10,
             coverage: 75,
             compliance: 90
+        },
+        weighting: {
+            blocker: 10,
+            critical: 5,
+            major: 3,
+            minor: 1,
+            info: 0
         }
     }
 });

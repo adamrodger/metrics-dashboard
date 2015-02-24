@@ -32,6 +32,7 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
         // for each time period, aggregate the metrics for all projects, weighted by lines
         function calculateMetrics(timePeriods) {
             $log.info('Calculating metrics from retrieved data');
+            var weighting = appConfig.sonar.weighting
 
             $scope.metrics = [];
             var periodsLength = timePeriods.length;
@@ -50,11 +51,11 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                         untestedLinesInProjectInPeriod: project.untestedLines,
 
                         // Magic numbers are the Sonar default weights. To be replaced with config data eventually.
-                        weightedBlockingIssuesInProjectInPeriod: 10 * project.blockerIssues,
-                        weightedCriticalIssuesInProjectInPeriod: 5 * project.criticalIssues,
-                        weightedMajorIssuesInProjectInPeriod: 3 * project.majorIssues,
-                        weightedMinorIssuesInProjectInPeriod: 1 * project.minorIssues,
-                        weightedInfoIssuesInProjectInPeriod: 0 * project.infoIssues
+                        weightedBlockingIssuesInProjectInPeriod: weighting.blocker * project.blockerIssues,
+                        weightedCriticalIssuesInProjectInPeriod: weighting.critical * project.criticalIssues,
+                        weightedMajorIssuesInProjectInPeriod: weighting.major * project.majorIssues,
+                        weightedMinorIssuesInProjectInPeriod: weighting.minor * project.minorIssues,
+                        weightedInfoIssuesInProjectInPeriod: weighting.info * project.infoIssues
 
                     };
                 });

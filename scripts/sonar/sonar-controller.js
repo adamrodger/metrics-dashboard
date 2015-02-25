@@ -5,6 +5,14 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
         $scope.metrics = new Array();
         $scope.goals = appConfig.sonar.goals;
 
+        function fixNaN(value){
+            if (isNaN(value)){
+                return 0;
+            } else {
+                return value;
+            }
+        }
+        
         function sum(array, property) {
             return array.reduce(function(total, project) {
                 return total + project[property];
@@ -50,7 +58,6 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                         testableLinesInProjectInPeriod: project.testableLines,
                         untestedLinesInProjectInPeriod: project.untestedLines,
 
-                        // Magic numbers are the Sonar default weights. To be replaced with config data eventually.
                         weightedBlockingIssuesInProjectInPeriod: weighting.blocker * project.blockerIssues,
                         weightedCriticalIssuesInProjectInPeriod: weighting.critical * project.criticalIssues,
                         weightedMajorIssuesInProjectInPeriod: weighting.major * project.majorIssues,
@@ -78,6 +85,7 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                 var untestedLinesOfCodeInPeriod = sum(weightedMetrics, 'untestedLinesInProjectInPeriod')
                 
                 var codeCoverageInPeriod = ((testableLinesOfCodeInPeriod - untestedLinesOfCodeInPeriod) / testableLinesOfCodeInPeriod) * 100
+                codeCoverageInPeriod = fixNaN(codeCoverageInPeriod)
                 
                 // add the details for the complete time period
                 $scope.metrics.push({

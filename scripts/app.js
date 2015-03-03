@@ -15,6 +15,6 @@ app.constant('appConfig', {
             coverage: 75,
             compliance: 90
         },
-		projectsRegex: 'PROJECTREGEX'
+	projectsRegex: '.*'
     }
 });

@@ -14,6 +14,7 @@ app.constant('appConfig', {
             fileComplexity: 10,
             coverage: 75,
             compliance: 90
-        }
+        },
+	projectsRegex: '.*'
     }
 });

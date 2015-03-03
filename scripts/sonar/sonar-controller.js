@@ -114,9 +114,9 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
 
         // load all data from the Sonar service and aggregate results
         Sonar.resources().then(function(response) {
-			var filteredResponseData = response.data.filter(function (project) {
-				return project.name.match(appConfig.sonar.projectsRegex);
-			});
+	    var filteredResponseData = response.data.filter(function (project) {
+		return project.name.match(appConfig.sonar.projectsRegex);
+	    });
             var timePeriods = generateTimePeriods();
             processResources(filteredResponseData, timePeriods);
         });

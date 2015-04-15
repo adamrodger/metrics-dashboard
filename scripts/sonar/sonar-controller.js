@@ -32,6 +32,7 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
         // for each time period, aggregate the metrics for all projects, weighted by lines
         function calculateMetrics(timePeriods) {
             $log.info('Calculating metrics from retrieved data');
+            var weighting = appConfig.sonar.weighting
 
             $scope.metrics = [];
             var periodsLength = timePeriods.length;
@@ -40,24 +41,40 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                 var timePeriod = timePeriods[i];
                 var totalLines = sum(timePeriod.metrics, 'lines');
 
-                var weightedMetrics = timePeriod.metrics.map(function(project) {
-                    var factor = project.lines / totalLines;
+                var sonarData = timePeriod.metrics.map(function(project) {
 
                     return {
-                        methodComplexity: factor * project.methodComplexity,
-                        fileComplexity: factor * project.fileComplexity,
-                        coverage: factor * project.coverage,
-                        compliance: factor * project.compliance,
+                        numberOfMethods: project.totalMethods,
+                        numberOfFiles: project.totalFiles,
+                        projectComplexity: project.totalComplexity,
+                        projectTestableLines: project.testableLines,
+                        projectUntestableLines: project.untestedLines,
+                        weightedBlockingIssues: weighting.blocker * project.blockerIssues,
+                        weightedCriticalIssues: weighting.critical * project.criticalIssues,
+                        weightedMajorIssues: weighting.major * project.majorIssues,
+                        weightedMinorIssues: weighting.minor * project.minorIssues,
+                        weightedInfoIssues: weighting.info * project.infoIssues
                     };
                 });
-
+                
+                // Complexity calculations
+                var methodComplexity = calculateMethodComplexity(sonarData);
+                var fileComplexity = calculateFileComplexity(sonarData);
+                
+                // Compliance calculations
+                var rulesCompliance = calculateCompliance(sonarData, totalLines);
+                
+                // Coverage calculations
+                var codeCoverage = calculateLineCoverage(sonarData);
+                
+                // add the details for the complete time period
                 $scope.metrics.push({
                     date: timePeriod.date,
                     totalLines: totalLines,
-                    methodComplexity: sum(weightedMetrics, 'methodComplexity').toFixed(2),
-                    fileComplexity: sum(weightedMetrics, 'fileComplexity').toFixed(2),
-                    coverage: sum(weightedMetrics, 'coverage').toFixed(2),
-                    compliance: sum(weightedMetrics, 'compliance').toFixed(2)
+                    methodComplexity: methodComplexity.toFixed(2),
+                    fileComplexity: fileComplexity.toFixed(2),
+                    coverage: codeCoverage.toFixed(2),
+                    compliance: rulesCompliance.toFixed(2)
                 });
             }
 
@@ -67,6 +84,31 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
             $log.info('Finished calculating metrics');
         }
 
+        function calculateFileComplexity(sonarData) {
+            var complexity = sum(sonarData, 'projectComplexity')
+            return complexity / sum(sonarData, 'numberOfFiles')
+        }
+        
+        function calculateMethodComplexity(sonarData){
+            var complexity = sum(sonarData, 'projectComplexity')
+            return complexity / sum(sonarData, 'numberOfMethods')
+        }
+        
+        function calculateLineCoverage(sonarData){
+            var testableLinesOfCode = sum(sonarData, 'projectTestableLines')
+            var untestedLinesOfCode = sum(sonarData, 'projectUntestableLines')      
+            
+            return (((testableLinesOfCode - untestedLinesOfCode) / testableLinesOfCode) * 100) || 0
+        }
+        
+        function calculateCompliance(sonarData, totalLines){
+            var totalWeightedIssues = sum(sonarData, 'weightedBlockingIssues') + sum(sonarData, 'weightedCriticalIssues')
+                                    + sum(sonarData, 'weightedMajorIssues') + sum(sonarData, 'weightedMinorIssues')
+                                    + sum(sonarData, 'weightedInfoIssues');
+                                    
+            return (100 - (totalWeightedIssues / totalLines) * 100)
+        }
+        
         function processTimePeriod(resource, timePeriod) {
             // TODO: optimise to use the end of the previous period instead of always selecting all data.
             // Not as easy as it sounds because a project might not have changed in that period so you'd
@@ -86,10 +128,16 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                 timePeriod.metrics.push({
                     name: resource.name,
                     lines: project.v[0],
-                    methodComplexity: project.v[1],
-                    fileComplexity: project.v[2],
-                    coverage: project.v[3],
-                    compliance: project.v[4]
+                    totalComplexity: project.v[1],
+                    totalFiles: project.v[2],
+                    totalMethods: project.v[3],
+                    blockerIssues: project.v[4],
+                    criticalIssues: project.v[5],
+                    majorIssues: project.v[6],
+                    minorIssues: project.v[7],
+                    infoIssues: project.v[8],
+                    testableLines: project.v[9],
+                    untestedLines: project.v[10]
                 });
 
                 $log.debug('Successfully retrieved metrics for %s during %s', resource.name, timePeriod.date.format('YYYY-MM'));

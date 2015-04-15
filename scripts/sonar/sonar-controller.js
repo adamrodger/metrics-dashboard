@@ -48,7 +48,7 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                         numberOfFiles: project.totalFiles,
                         projectComplexity: project.totalComplexity,
                         projectTestableLines: project.testableLines,
-                        projectUntestableLines: project.untestedLines,
+                        projectUntestedLines: project.untestedLines,
                         weightedBlockingIssues: weighting.blocker * project.blockerIssues,
                         weightedCriticalIssues: weighting.critical * project.criticalIssues,
                         weightedMajorIssues: weighting.major * project.majorIssues,
@@ -96,7 +96,7 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
         
         function calculateLineCoverage(sonarData){
             var testableLinesOfCode = sum(sonarData, 'projectTestableLines')
-            var untestedLinesOfCode = sum(sonarData, 'projectUntestableLines')      
+            var untestedLinesOfCode = sum(sonarData, 'projectUntestedLines')      
             
             return (((testableLinesOfCode - untestedLinesOfCode) / testableLinesOfCode) * 100) || 0
         }
@@ -106,7 +106,7 @@ angular.module('app.sonar').controller('SonarCtrl', ['$scope', '$log', '$q', 'ap
                                     + sum(sonarData, 'weightedMajorIssues') + sum(sonarData, 'weightedMinorIssues')
                                     + sum(sonarData, 'weightedInfoIssues');
                                     
-            return (100 - (totalWeightedIssues / totalLines) * 100)
+            return 100 - (totalWeightedIssues / totalLines * 100)
         }
         
         function processTimePeriod(resource, timePeriod) {

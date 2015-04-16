@@ -17,6 +17,11 @@
 </head>
 <body>
     <div class="container-fluid">
+        <div ng-controller="DashboardCtrl">
+            <div class="row">
+                <h3>{{ projectName }} Code Metrics <small>Generated: {{ generatedDate | date:'yyyy-MM-dd HH:mm' }}</small></h3>
+            </div>
+        </div>
         <div ng-controller="SonarCtrl">
             <div class="row">
                 <div class="col-md-4">
@@ -80,6 +85,7 @@
     <script type="text/javascript" src="scripts/sonar/sonar-service.js"></script>
     <script type="text/javascript" src="scripts/sonar/sonar-controller.js"></script>
     <script type="text/javascript" src="scripts/dashboard/dashboard.js"></script>
+    <script type="text/javascript" src="scripts/dashboard/dashboard-controller.js"></script>
     <script type="text/javascript" src="scripts/dashboard/trend-directive.js"></script>
 </body>
 </html>

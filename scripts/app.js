@@ -5,6 +5,7 @@ var app = angular.module('app', [
 ]);
 
 app.constant('appConfig', {
+    projectName: "MYPROJECTNAME",
     sonar: {
         baseUrl: 'http://localhost/api',
         username: 'YOURUSERNAME',

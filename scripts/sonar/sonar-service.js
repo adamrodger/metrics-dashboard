@@ -11,8 +11,7 @@ angular.module('app.sonar').service('Sonar', ['$http', 'appConfig',
         $http.defaults.headers['Authorization'] = 'Basic ' + window.btoa(appConfig.sonar.username + ':' + appConfig.sonar.password);
 
         function resources() {
-            var ret = $http.jsonp(appConfig.sonar.baseUrl + '/resources?callback=JSON_CALLBACK');
-            return ret;
+            return $http.jsonp(appConfig.sonar.baseUrl + '/resources?callback=JSON_CALLBACK');            
         }
 
         function metrics(key, date) {

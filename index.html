@@ -14,9 +14,10 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+	<script type="text/javascript" src="scripts/libs/jquery.ajax-cross-origin.min.js"></script>
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid">		
         <div ng-controller="DashboardCtrl">
             <div class="row">
                 <h3>{{ projectName }} Code Metrics <small>Generated: {{ generatedDate | date:'yyyy-MM-dd HH:mm' }}</small></h3>
@@ -78,12 +79,27 @@
                 <line-chart title="Rules Compliance" property="compliance" goal="goals.compliance" unit="%" metrics="metrics"></line-chart>
             </div>
         </div>
+		<div ng-controller="GerritCtrl">
+			<div class="row">
+				<div ng-repeat="product in gerritStats" class="col-md-6">
+					<div class="panel panel-default">
+						<div class="panel-heading ng-binding">{{product.projectName}} Code Review Stats</div>
+						<div class="panel-body">
+							<div id="{{product.projectName}}"></div>						
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
     </div>
 
     <script type="text/javascript" src="scripts/app.js"></script>
     <script type="text/javascript" src="scripts/sonar/sonar.js"></script>
     <script type="text/javascript" src="scripts/sonar/sonar-service.js"></script>
     <script type="text/javascript" src="scripts/sonar/sonar-controller.js"></script>
+    <script type="text/javascript" src="scripts/gerrit/gerrit.js"></script>
+	<script type="text/javascript" src="scripts/gerrit/gerrit-project.js"></script>    
+    <script type="text/javascript" src="scripts/gerrit/gerrit-controller.js"></script>	
     <script type="text/javascript" src="scripts/dashboard/dashboard.js"></script>
     <script type="text/javascript" src="scripts/dashboard/dashboard-controller.js"></script>
     <script type="text/javascript" src="scripts/dashboard/trend-directive.js"></script>

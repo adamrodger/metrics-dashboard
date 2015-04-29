@@ -24,5 +24,14 @@ app.constant('appConfig', {
             minor: 1,
             info: 0
         }
-    }
+    },
+	gerrit: {		
+		gerritProduct1: 'project1 project2.2',
+		gerritProduct2: 'project4 project5',		
+		proxy: 'http://proxyServer:1234',
+		startDate: new Date(new Date().setYear(new Date().getFullYear() - 1)),
+		endDate: new Date(),
+		botName: "Name of Jenkins bot",
+		colors: ["#ff0000", "#008000", "#679DC6", "#0b62a4"]
+	}
 });
